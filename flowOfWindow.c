@@ -24,8 +24,34 @@ LRESULT CALLBACK myCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         FillRect(hdc, &paintStruct.rcPaint, (HBRUSH)(COLOR_HIGHLIGHT+1));
 
+        RECT rectangle = {0};
+        rectangle.bottom = 30;
+        rectangle.left = 40;
+        rectangle.top = 100;
+        rectangle.right = 90;
+
+        RECT biggerR = {0};
+        biggerR.bottom = 110;
+        biggerR.left = 100;
+        biggerR.right = 250;
+        biggerR.top = 260;
+
+        FillRect(hdc, &rectangle, (HBRUSH)(COLOR_WINDOW+1));
+
+        HBRUSH brush = CreateSolidBrush(RGB(255, 0, 0));
+        FillRect(hdc, &biggerR, brush);
+
         EndPaint(hwnd, &paintStruct);
 
+        return 0;
+
+    case WM_LBUTTONDOWN:
+        int x = (int)(short)LOWORD(lParam);
+        int y = (int)(short)HIWORD(lParam);
+
+        wchar_t position[256];
+        wsprintf(position, L"Clique na posição (%d, %d)", x, y);
+        MessageBoxW(hwnd, position, L"Posição", MB_OK);
         return 0;
     
     default:
