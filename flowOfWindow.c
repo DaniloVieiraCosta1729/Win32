@@ -46,7 +46,7 @@ LRESULT CALLBACK myCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
 
     case WM_LBUTTONDOWN:
-        int x = (int)(short)LOWORD(lParam);
+        int x = (int)(short)LOWORD(lParam); // The coordinates are of type WORD (unsigned 16 bits), but semantically, we should look at this as a 16-bit signed integer, so to obtain the right interpretation, we should cast it to short. The int is just to keep things standard.
         int y = (int)(short)HIWORD(lParam);
 
         wchar_t position[256];
