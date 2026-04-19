@@ -5,6 +5,10 @@
 #include <windows.h>
 #include <locale.h>
 
+COLORREF bg = RGB(0, 0, 50);
+int left = 40;
+int bottom = 30;
+
 LRESULT CALLBACK myCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
@@ -19,40 +23,73 @@ LRESULT CALLBACK myCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
 
     case WM_PAINT:
-        PAINTSTRUCT paintStruct = {};
-        HDC hdc = BeginPaint(hwnd, &paintStruct);
+        {
+            PAINTSTRUCT paintStruct = {};
+            HDC hdc = BeginPaint(hwnd, &paintStruct);
+            HBRUSH windowBrush = CreateSolidBrush(bg);
+            FillRect(hdc, &paintStruct.rcPaint, windowBrush);
 
-        FillRect(hdc, &paintStruct.rcPaint, (HBRUSH)(COLOR_HIGHLIGHT+1));
+            RECT rectangle = {0};
+            rectangle.bottom = bottom;
+            rectangle.left = left;
+            rectangle.top = bottom + 70;
+            rectangle.right = left + 70;
 
-        RECT rectangle = {0};
-        rectangle.bottom = 30;
-        rectangle.left = 40;
-        rectangle.top = 100;
-        rectangle.right = 90;
+            RECT biggerR = {0};
+            biggerR.bottom = 110;
+            biggerR.left = 100;
+            biggerR.right = 250;
+            biggerR.top = 260;
 
-        RECT biggerR = {0};
-        biggerR.bottom = 110;
-        biggerR.left = 100;
-        biggerR.right = 250;
-        biggerR.top = 260;
+            FillRect(hdc, &rectangle, (HBRUSH)(COLOR_WINDOW+1));
 
-        FillRect(hdc, &rectangle, (HBRUSH)(COLOR_WINDOW+1));
+            HBRUSH brush = CreateSolidBrush(RGB(255, 0, 0));
+            FillRect(hdc, &biggerR, brush);
+            DeleteObject(windowBrush);
+            DeleteObject(brush);
 
-        HBRUSH brush = CreateSolidBrush(RGB(255, 0, 0));
-        FillRect(hdc, &biggerR, brush);
+            EndPaint(hwnd, &paintStruct);
 
-        EndPaint(hwnd, &paintStruct);
-
-        return 0;
-
+            return 0;
+        }
+    
     case WM_LBUTTONDOWN:
-        int x = (int)(short)LOWORD(lParam); // The coordinates are of type WORD (unsigned 16 bits), but semantically, we should look at this as a 16-bit signed integer, so to obtain the right interpretation, we should cast it to short. The int is just to keep things standard.
-        int y = (int)(short)HIWORD(lParam);
+        {
+            int x = (int)(short)LOWORD(lParam); // The coordinates are of type WORD (unsigned 16 bits), but semantically, we should look at this as a 16-bit signed integer, so to obtain the right interpretation, we should cast it to short. The int is just to keep things standard.
+            int y = (int)(short)HIWORD(lParam);
 
-        wchar_t position[256];
-        wsprintf(position, L"Clique na posição (%d, %d)", x, y);
-        MessageBoxW(hwnd, position, L"Posição", MB_OK);
-        return 0;
+            left = x;
+            bottom = y;
+
+            int red = x % 256;
+            int blue = 255 - red;
+            int green = y % 256;
+            bg = RGB(red, green, blue);
+            InvalidateRect(hwnd, NULL, TRUE);
+
+            INPUT input = {0};
+            input.type = INPUT_KEYBOARD;
+            input.ki.wVk = VK_VOLUME_DOWN;
+            SendInput(1, &input, sizeof(input));
+
+            wchar_t position[256];
+            wsprintf(position, L"Clique na posição (%d, %d)", x, y);
+            MessageBoxW(hwnd, position, L"Posição", MB_OK);
+            return 0;
+        }
+    
+    case WM_KEYDOWN:
+        {
+            if (wParam == VK_RIGHT)
+            {
+                INPUT pausar = {0};
+                pausar.type = INPUT_KEYBOARD;
+                pausar.ki.wVk = VK_MEDIA_PLAY_PAUSE;
+                SendInput(1, &pausar, sizeof(pausar));
+            }
+
+            return 0;            
+        }
     
     default:
         break;
