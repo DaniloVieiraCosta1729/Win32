@@ -9,6 +9,9 @@ COLORREF bg = RGB(0, 0, 50);
 int left = 40;
 int bottom = 30;
 
+int mouseX = 100;
+int mouseY = 100;
+
 LRESULT CALLBACK myCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
@@ -36,10 +39,10 @@ LRESULT CALLBACK myCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             rectangle.right = left + 70;
 
             RECT biggerR = {0};
-            biggerR.bottom = 110;
-            biggerR.left = 100;
-            biggerR.right = 250;
-            biggerR.top = 260;
+            biggerR.bottom = mouseY;
+            biggerR.left = mouseX;
+            biggerR.right = mouseX + 100;
+            biggerR.top = mouseY + 100;
 
             FillRect(hdc, &rectangle, (HBRUSH)(COLOR_WINDOW+1));
 
@@ -90,6 +93,14 @@ LRESULT CALLBACK myCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
             return 0;            
         }
+    
+    case WM_MOUSEMOVE:
+    {
+        mouseX = (int)(short)LOWORD(lParam);
+        mouseY = (int)(short)HIWORD(lParam);
+        InvalidateRect(hwnd, NULL, TRUE);
+        return 0;
+    }
     
     default:
         break;
