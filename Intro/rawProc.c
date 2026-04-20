@@ -68,35 +68,16 @@ LRESULT CALLBACK wProcedure(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         */
     case WM_INPUT:
         {
-            BYTE buffer[1024];
+            RAWINPUT buffer[1024];
             UINT size = sizeof(buffer);
 
             if (GetRawInputData((HRAWINPUT)lParam, RID_INPUT, buffer, &size, sizeof(RAWINPUTHEADER)) > 0)
             {
-                RAWINPUT* raw = (RAWINPUT*)buffer;
 
-                if (raw->header.dwType == RIM_TYPEMOUSE)
+                if (buffer->header.dwType == RIM_TYPEMOUSE)
                 {
-                    x += raw->data.mouse.lLastX;
-                    y += raw->data.mouse.lLastY;
-                }
-
-                if (x > width - SQUARE_SIZE)
-                {
-                    x = width - SQUARE_SIZE - 1;
-                }
-                if (x < 0)
-                {
-                    x = 1;
-                }
-
-                if (y > height - SQUARE_SIZE)
-                {
-                    y = height - SQUARE_SIZE - 1;
-                }
-                if (y < 0)
-                {
-                    y = 1;
+                    x += buffer->data.mouse.lLastX;
+                    y += buffer->data.mouse.lLastY;
                 }
                 
             }

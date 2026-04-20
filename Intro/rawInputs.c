@@ -38,7 +38,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR argvWin,
 
     RAWINPUTDEVICE rid = {0};
     rid.hwndTarget = hwnd;
-    rid.dwFlags = 0;
+    rid.dwFlags = RIDEV_INPUTSINK;
     rid.usUsagePage = 1;
     rid.usUsage = 2; // for mouse
     RegisterRawInputDevices(&rid, 1, sizeof(rid));
