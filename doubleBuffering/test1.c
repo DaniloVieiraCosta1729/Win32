@@ -14,6 +14,7 @@ typedef struct
 
 HBRUSH wndBrush = {0};
 HBRUSH squareBrush = {0};
+HBRUSH circleBrush = {0};
 HDC backDC = NULL;
 HBITMAP backBitmap = NULL;
 int bufferWidth;
@@ -109,9 +110,10 @@ LRESULT CALLBACK renderProc(HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lParam)
             COLORREF squareColor = RGB((((mouseX % 256) + 256) % 256), ((((mouseX + mouseX)/2) % 256) + 256) % 256, (((mouseY % 256) + 256) % 256));
             squareBrush = CreateSolidBrush(squareColor);
             FillRect(backDC, &mouseSquare, squareBrush);
-            DeleteObject(squareBrush);
 
             BitBlt(hdc, 0, 0, bufferWidth, bufferHeight, backDC, 0, 0, SRCCOPY);
+
+            DeleteObject(squareBrush);
             
             EndPaint(hwnd, &ps);
             return 0;
